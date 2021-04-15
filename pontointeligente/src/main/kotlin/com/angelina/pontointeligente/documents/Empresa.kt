@@ -4,12 +4,12 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "empresa")
-data class Empresa (
+data class Empresa(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_empresa")
-    val id: Long,
+    val id: Long?,
 
     @Column(name = "razao_social")
     val razaoSocial: String,

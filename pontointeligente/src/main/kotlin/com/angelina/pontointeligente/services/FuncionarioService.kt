@@ -1,7 +1,6 @@
 package com.angelina.pontointeligente.services
 
 import com.angelina.pontointeligente.documents.Funcionario
-import java.util.*
 
 interface FuncionarioService {
 

@@ -10,12 +10,13 @@ import java.util.*
 
 @Service
 class LancamentoServiceImpl(val lancamentoRepository: LancamentoRepository) : LancamentoService {
-    override fun buscarPorFuncionarioId(funcionarioId: String, pageRequest: PageRequest): Page<Lancamento> =
+
+    override fun buscarPorFuncionarioId(funcionarioId: Long, pageRequest: PageRequest): Page<Lancamento> =
         lancamentoRepository.findByFuncionarioId(funcionarioId, pageRequest)
 
-    override fun buscarPorId(id: Long): Optional<Lancamento> = lancamentoRepository.findById(id)
+    override fun buscarPorId(id: Long) = lancamentoRepository.findLancById(id)
 
-    override fun persistir(lancamento: Lancamento): Lancamento = lancamentoRepository.save(lancamento)
+    override fun persistir(lancamento: Lancamento) = lancamentoRepository.save(lancamento)
 
     override fun remover(id: Long) = lancamentoRepository.deleteById(id)
 }

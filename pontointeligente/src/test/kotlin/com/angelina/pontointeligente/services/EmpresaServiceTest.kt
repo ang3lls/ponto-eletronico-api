@@ -9,39 +9,38 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import kotlin.jvm.Throws
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
+@ActiveProfiles("test")
 class EmpresaServiceTest {
 
     @Autowired
-    val empresaService: EmpresaService? = null
+    lateinit var empresaService: EmpresaService
 
-    @Autowired
-    private val empresaRepository: EmpresaRepository? = null
+    @MockBean
+    private lateinit var empresaRepository: EmpresaRepository
 
-    private val CNPJ =  "51463645000100"
-
-    private fun empresa(): Empresa = Empresa(1, "Razão Social", CNPJ)
-
-    @Before
-    @Throws(Exception::class)
-    fun setUp(){
-        BDDMockito.given(empresaRepository?.findByCnpj(CNPJ)).willReturn(empresa())
-        BDDMockito.given(empresaRepository?.save(empresa())).willReturn(empresa())
-    }
+    private val CNPJ = "51463645000100"
 
     @Test
-    fun testBuscarEmpresaPorCnpj(){
-        val empresa: Empresa? = empresaService?.buscarPorCnpj(CNPJ)
+    fun testBuscarEmpresaPorCnpj() {
+        BDDMockito.given(empresaRepository.findByCnpj(CNPJ)).willReturn(empresa())
+        val empresa: Empresa? = empresaService.buscarPorCnpj(CNPJ)
         Assert.assertNotNull(empresa)
     }
 
     @Test
-    fun testPersistirEmpresa(){
-        val empresa: Empresa? = empresaService?.persistir(empresa())
+    fun testPersistirEmpresa() {
+        BDDMockito.given(empresaRepository.save(empresa())).willReturn(empresa())
+        val empresa: Empresa? = empresaService.persistir(empresa())
         Assert.assertNotNull(empresa)
     }
+
+    private fun empresa(): Empresa = Empresa(1,"Razão Social", CNPJ)
+
 }

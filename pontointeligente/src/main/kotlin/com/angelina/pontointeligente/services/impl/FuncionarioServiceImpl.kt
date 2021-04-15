@@ -11,9 +11,9 @@ class FuncionarioServiceImpl(val funcionarioRepository: FuncionarioRepository) :
 
     override fun persistir(funcionario: Funcionario): Funcionario = funcionarioRepository.save(funcionario)
 
-    override fun buscarPorCpf(cpf: String): Funcionario? = funcionarioRepository.findByCpf(cpf)
+    override fun buscarPorCpf(cpf: String) = funcionarioRepository.findByCpf(cpf)
 
-    override fun buscarPorEmail(email: String): Funcionario? = funcionarioRepository.findByEmail(email)
+    override fun buscarPorEmail(email: String) = funcionarioRepository.findByEmail(email)
 
-    override fun buscarPorId(id: Long): Optional<Funcionario> = funcionarioRepository.findById(id)
+    override fun buscarPorId(id: Long) = funcionarioRepository.findFuncById(id)
 }

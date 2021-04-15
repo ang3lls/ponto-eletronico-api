@@ -6,12 +6,12 @@ import kotlin.jvm.Transient
 
 @Entity
 @Table(name = "funcionario")
-data class Funcionario (
+data class Funcionario(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_funcionario")
-    val id: Long,
+    val id: Long?,
 
     @Column(name = "nome")
     val nome: String,
@@ -23,13 +23,13 @@ data class Funcionario (
     val senha: String,
 
     @Column(name = "cpf")
-    val cpf: String,
+    val cpf: String?,
 
     @Transient
     val perfil: PerfilEnum,
 
-    val empresaId: Long,
-//    val valorHora: String,
-//    val qtdHorasTrabalhoDia: String,
-//    val qtdHorasAlmoco: String
+    val empresaId: String,
+    val valorHora: Double?,
+    val qtdHorasTrabalhoDia: Float?,
+    val qtdHorasAlmoco: Float?
 )

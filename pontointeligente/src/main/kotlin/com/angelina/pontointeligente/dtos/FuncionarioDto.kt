@@ -4,7 +4,7 @@ import org.hibernate.validator.constraints.Length
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotEmpty
 
-data class FuncionarioDto (
+data class FuncionarioDto(
 
     //Validações dos atributos
     @get:NotEmpty(message = "Nome não pode ser vazio.")

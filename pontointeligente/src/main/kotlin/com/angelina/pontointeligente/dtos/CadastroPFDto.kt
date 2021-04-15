@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.br.CPF
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotEmpty
 
-data class CadastroPFDto (
+data class CadastroPFDto(
 
     @get:NotEmpty(message = "Nome não pode ser vazio.")
     @get:Length(min = 3, max = 200, message = "Nome deve conter entre 3 e 200 caracteres.")
@@ -22,7 +22,7 @@ data class CadastroPFDto (
 
     @get:NotEmpty(message = "CPF não pode ser vazio.")
     @get:CPF(message = "CPF Inválido.")
-    val cpf: String = "",
+    val cpf: String? = "",
 
     @get:NotEmpty(message = "CNPJ não pode ser vazio.")
     @get:CNPJ(message = "CNPJ Inválido.")

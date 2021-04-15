@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.BindingResult
 import org.springframework.validation.ObjectError
 import org.springframework.web.bind.annotation.*
@@ -28,6 +29,7 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
     @Value("\${paginacao.qtd_por_pagina}")
     val qtdPorPagina: Int = 15
 
+    @PostMapping("/save")
     fun adicionar(@Valid @RequestBody lancamentoDto: LancamentoDto,
                   result: BindingResult): ResponseEntity<Response<LancamentoDto>>{
         val response: Response<LancamentoDto> = Response<LancamentoDto>()
@@ -45,10 +47,10 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
         return ResponseEntity.ok(response)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getId/{id}")
     fun listarPorId(@PathVariable("id") id: Long): ResponseEntity<Response<LancamentoDto>>{
         val response: Response<LancamentoDto> = Response<LancamentoDto>()
-        val lancamento: Lancamento = lancamentoService.buscarPorId(id).get()
+        val lancamento: Lancamento? = lancamentoService.buscarPorId(id)
 
         //tratamento de erro
         if (lancamento == null){
@@ -60,7 +62,8 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
         return ResponseEntity.ok(response)
     }
 
-    fun listarPorFuncionarioId(@PathVariable("funcionarioId") funcionarioId: String,
+    @GetMapping("/getFunByID/{id}")
+    fun listarPorFuncionarioId(@PathVariable("funcionarioId") funcionarioId: Long,
                                 @RequestParam("pag", defaultValue = "0") pag: Int,
                                 @RequestParam("ord", defaultValue = "id") ord: String,
                                 @RequestParam("dir", defaultValue = "DESC") dir: String):
@@ -68,7 +71,7 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
 
         val response: Response<Page<LancamentoDto>> = Response<Page<LancamentoDto>>()
 
-        val pageRequest: PageRequest = PageRequest(pag, qtdPorPagina, Sort.Direction.valueOf(dir), ord)
+        val pageRequest: PageRequest = PageRequest.of(pag, qtdPorPagina, Sort.Direction.valueOf(dir), ord)
         val lancamentos: Page<Lancamento> = lancamentoService.buscarPorFuncionarioId(funcionarioId, pageRequest)
 
         val lancamentoDto: Page<LancamentoDto> = lancamentos.map { lancamento -> converterLancamentoDto(lancamento) }
@@ -78,7 +81,7 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
 
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     fun atualizar(@PathVariable("id") id: Long, @Valid @RequestBody lancamentoDto: LancamentoDto,
                     result: BindingResult): ResponseEntity<Response<LancamentoDto>> {
 
@@ -97,11 +100,12 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
         return ResponseEntity.ok(response)
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     fun remover(@PathVariable("id") id: Long): ResponseEntity<Response<String>>{
 
         val response: Response<String> = Response<String>()
-        val lancamento: Optional<Lancamento> = lancamentoService.buscarPorId(id)
+        val lancamento: Lancamento? = lancamentoService.buscarPorId(id)
 
         if (lancamento == null){
             response.erros.add("Erro ao remover lançamento. Registro não encontrado para o id $id")
@@ -119,7 +123,7 @@ class LancamentoController(val lancamentoService: LancamentoService, val funcion
 
     private fun converterDtoParaLancamento(lancamentoDto: LancamentoDto, result: BindingResult): Lancamento {
         if (lancamentoDto.id != null){
-            val lanc: Optional<Lancamento> = lancamentoService.buscarPorId(lancamentoDto.id!!)
+            val lanc: Lancamento? = lancamentoService.buscarPorId(lancamentoDto.id!!)
             if (lanc == null) result.addError(
                 ObjectError("lancamento",
                 "Lançamento não encontrado.")

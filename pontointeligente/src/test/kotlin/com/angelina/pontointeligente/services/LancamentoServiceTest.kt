@@ -4,6 +4,7 @@ import com.angelina.pontointeligente.documents.Lancamento
 import com.angelina.pontointeligente.enums.TipoEnum
 import com.angelina.pontointeligente.repositories.LancamentoRepository
 import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -30,36 +31,34 @@ class LancamentoServiceTest {
     @Autowired
     private val lancamentoService: LancamentoService? = null
 
-    private val funcionaioId: String = "1"
+    private val funcionaioId: Long = 1
     private val id: Long = 1
+    private val descricao: String = ""
+    private val localizacao:String = ""
 
-    private fun lancamento(): Lancamento  = Lancamento(id, Date(), TipoEnum.INICIO_TRABALHO, funcionaioId)
-
-    @Before
-    @Throws(Exception::class)
-    fun setUp() {
-        BDDMockito.given<Page<Lancamento>>(lancamentoRepository?.findByFuncionarioId(funcionaioId, PageRequest.of(0, 10)))
-            .willReturn(PageImpl(ArrayList<Lancamento>()))
-        BDDMockito.given(lancamentoRepository?.getOne(java.lang.Long.valueOf("1"))).willReturn(lancamento())
-        BDDMockito.given(lancamentoRepository?.save(Mockito.any(Lancamento::class.java)))
-    }
+    private fun lancamento(): Lancamento  = Lancamento(id, Date(), TipoEnum.INICIO_TRABALHO, descricao, localizacao,
+    funcionaioId)
 
     @Test
     fun testBuscarLancamentoPorfuncionarioId() {
+        BDDMockito.given<Page<Lancamento>>(lancamentoRepository?.findByFuncionarioId(funcionaioId, PageRequest.of(0, 10)))
+            .willReturn(PageImpl(ArrayList<Lancamento>()))
         val lancamento: Page<Lancamento>? =
             lancamentoService?.buscarPorFuncionarioId(funcionaioId, PageRequest.of(0, 10))
-        Assert.assertNotNull(lancamento)
+        assertNotNull(lancamento)
     }
 
     @Test
     fun testBuscarLancamentoPorId() {
-        val lancamento: Optional<Lancamento>? = lancamentoService?.buscarPorId(id)
-        Assert.assertNotNull(lancamento)
+        BDDMockito.given(lancamentoRepository?.findLancById(id)).willReturn(lancamento())
+        val lancamento: Lancamento? = lancamentoService?.buscarPorId(id)
+        assertNotNull(lancamento)
     }
 
     @Test
     fun testPersistirLancamento() {
+        BDDMockito.given(lancamentoRepository?.save(Mockito.any(Lancamento::class.java))).willReturn(lancamento())
         val lancamento: Lancamento? = lancamentoService?.persistir(lancamento())
-        Assert.assertNotNull(lancamento)
+        assertNotNull(lancamento)
     }
 }

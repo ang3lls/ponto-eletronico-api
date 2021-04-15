@@ -26,6 +26,7 @@ dependencies {
 	implementation("junit:junit:4.13.1")
 	implementation("mysql:mysql-connector-java:8.0.15")
 	implementation("org.hibernate.validator:hibernate-validator:6.1.2.Final")
+	implementation("io.springfox:springfox-swagger2:2.9.2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 }
